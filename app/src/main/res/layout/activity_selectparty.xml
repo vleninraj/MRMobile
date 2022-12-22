@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/relparty"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        >
+        <ImageView
+            android:fontFamily="@font/nunito_regular"
+            android:layout_width="20sp"
+            android:layout_height="20sp"
+            android:src="@drawable/customericon"
+            android:id="@+id/nameimg"
+            />
+        <TextView
+            android:fontFamily="@font/nunito_regular"
+            android:layout_width="match_parent"
+            android:layout_height="20sp"
+            android:textSize="15sp"
+            android:layout_toRightOf="@+id/nameimg"
+            android:hint="Select Party "
+            android:id="@+id/txtpartycap"
+            android:paddingLeft="5dp"/>
+        <AutoCompleteTextView
+            android:fontFamily="@font/nunito_regular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtselectparty"
+            android:layout_marginTop="5dp"
+            android:layout_below="@id/txtpartycap" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:layout_below="@id/relparty"
+        android:layout_centerHorizontal="true"
+        >
+        <Button
+            android:id="@+id/btnok"
+            android:layout_width="130dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:fontFamily="@font/nunito_regular"
+            android:text="OK"
+            android:textAllCaps="false"
+            android:textColor="#fff"
+            android:textColorHint="#fff" />
+        <Button
+            android:id="@+id/btncancel"
+            android:layout_width="130dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/btnok"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:fontFamily="@font/nunito_regular"
+            android:text="Cancel"
+            android:textAllCaps="false"
+            android:textColor="#fff"
+            android:textColorHint="#fff" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

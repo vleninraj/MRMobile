@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/relnewordhead"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tvproductcode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginBottom="2dp"
+                android:fontFamily="@font/nunito_regular"
+                android:text="Code"
+                android:textSize="14sp"
+                 />
+            <TextView
+                android:id="@+id/tvproductname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@id/tvproductcode"
+                android:layout_marginBottom="2dp"
+                android:fontFamily="@font/nunito_regular"
+                android:text="Product 1"
+                android:textSize="14sp"
+                 />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relcenter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/relnewordhead">
+
+            <Button
+                android:id="@+id/btnposdecrement"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="2dp"
+                android:background="@drawable/minusicon"
+                android:elevation="5dp" />
+
+            <TextView
+                android:id="@+id/tvqty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/btnposdecrement"
+                android:fontFamily="@font/nunito_regular"
+                android:text="0"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnposincrement"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="2dp"
+                android:layout_toRightOf="@id/tvqty"
+                android:background="@drawable/addicon"
+                android:elevation="5dp" />
+
+            <TextView
+                android:id="@+id/tvunit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/btnposincrement"
+                android:fontFamily="@font/nunito_regular"
+                android:text="KG"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvsalesrate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_centerVertical="true"
+                android:gravity="right"
+                android:layout_toRightOf="@id/tvunit"
+                android:fontFamily="@font/nunito_regular"
+                android:text="0.0"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tvnewposamount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/btnremoveitem"
+                android:layout_marginLeft="5dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="5dp"
+                android:fontFamily="@font/nunito_regular"
+                android:gravity="right"
+                android:text="0.00"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnremoveitem"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="2dp"
+                android:background="@drawable/removeicon"
+                android:elevation="5dp" />
+
+        </RelativeLayout>
+
+
+        <View
+            android:fontFamily="@font/nunito_regular"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="2dp"
+            android:layout_below="@id/relcenter"
+            android:background="#B8CBEB"/>
+    </RelativeLayout>
+</RelativeLayout>

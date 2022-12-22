@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AddItemActivity">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/reladditem"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="30dp"
+        >
+
+        <Button
+            android:id="@+id/btnAdd"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/addicon"
+            android:fontFamily="@font/nunito_regular" />
+        <TextView
+            android:id="@+id/txtaddnewcap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nunito_regular"
+            android:gravity="left"
+            android:text="Add New Item"
+            android:textColor="#0D9228"
+            android:layout_marginBottom="10dp"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/relproduct"
+            android:layout_marginTop="5dp"
+            android:layout_below="@id/txtaddnewcap"
+            >
+            <ImageView
+                android:fontFamily="@font/nunito_regular"
+                android:layout_width="20sp"
+                android:layout_height="20sp"
+                android:src="@drawable/itemnameicon"
+                android:id="@+id/nameimg"
+                />
+            <TextView
+                android:fontFamily="@font/nunito_regular"
+                android:layout_width="match_parent"
+                android:layout_height="20sp"
+                android:textSize="12sp"
+                android:layout_toRightOf="@+id/nameimg"
+                android:hint="Select Product "
+                android:id="@+id/txtproductcap"
+                android:paddingLeft="5dp"/>
+
+            <AutoCompleteTextView
+                android:id="@+id/txtproduct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txtproductcap"
+                android:fontFamily="@font/nunito_regular"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:padding="5dp"
+                android:layout_marginTop="2dp"
+                android:textSize="18sp" />
+        </RelativeLayout>
+        <androidx.percentlayout.widget.PercentRelativeLayout
+            android:id="@+id/relqtyunit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/relproduct"
+            android:layout_marginTop="10dp"
+            >
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_widthPercent="50%"
+                android:id="@+id/relqty"
+                >
+                <ImageView
+                    android:fontFamily="@font/nunito_regular"
+                    android:layout_width="20sp"
+                    android:layout_height="20sp"
+                    android:src="@drawable/qtyicon"
+                    android:id="@+id/imgqty"
+                    />
+                <TextView
+                    android:fontFamily="@font/nunito_regular"
+                    android:layout_width="match_parent"
+                    android:layout_height="20sp"
+                    android:textSize="12sp"
+                    android:layout_toRightOf="@+id/imgqty"
+                    android:hint="Enter Qty"
+                    android:id="@+id/txtqtycap"
+                    android:paddingLeft="5dp"/>
+
+                <Button
+                    android:id="@+id/DecrementButton"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignBaseline="@+id/txtqty"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/decrement_button" />
+
+                <EditText
+                    android:id="@+id/txtqty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/txtqtycap"
+                    android:fontFamily="@font/nunito_regular"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal"
+                    android:layout_toLeftOf="@id/IncrementButton"
+                    android:layout_toRightOf="@id/DecrementButton"
+                    android:padding="5dp"
+                    android:layout_marginTop="2dp"
+                    android:textSize="18sp" />
+                <Button
+                    android:id="@+id/IncrementButton"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignBaseline="@+id/txtqty"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/increment_button" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_widthPercent="50%"
+                android:id="@+id/relunit"
+                android:layout_toRightOf="@id/relqty"
+                >
+                <ImageView
+                    android:fontFamily="@font/nunito_regular"
+                    android:layout_width="20sp"
+                    android:layout_height="20sp"
+                    android:src="@drawable/qtyicon"
+                    android:id="@+id/imgunit"
+                    />
+                <TextView
+                    android:fontFamily="@font/nunito_regular"
+                    android:layout_width="match_parent"
+                    android:layout_height="20sp"
+                    android:textSize="12sp"
+                    android:layout_toRightOf="@+id/imgunit"
+                    android:hint="Select Unit"
+                    android:id="@+id/txtunitcap"
+                    android:paddingLeft="5dp"/>
+                <Spinner
+                    android:id="@+id/txtunit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/txtunitcap"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="0dp"
+                    android:fontFamily="@font/nunito_regular" />
+            </RelativeLayout>
+
+        </androidx.percentlayout.widget.PercentRelativeLayout>
+        <androidx.percentlayout.widget.PercentRelativeLayout
+            android:id="@+id/relrateamount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/relqtyunit"
+            android:layout_marginTop="10dp"
+            >
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_widthPercent="50%"
+                android:id="@+id/relrate"
+                >
+                <ImageView
+                    android:fontFamily="@font/nunito_regular"
+                    android:layout_width="20sp"
+                    android:layout_height="20sp"
+                    android:src="@drawable/price"
+                    android:id="@+id/imgrate"
+                    />
+                <TextView
+                    android:fontFamily="@font/nunito_regular"
+                    android:layout_width="match_parent"
+                    android:layout_height="20sp"
+                    android:textSize="12sp"
+                    android:layout_toRightOf="@+id/imgrate"
+                    android:hint="Enter Rate"
+                    android:id="@+id/txtratecap"
+                    android:paddingLeft="5dp"/>
+
+                <EditText
+                    android:id="@+id/txtrate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/txtratecap"
+                    android:fontFamily="@font/nunito_regular"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal"
+                    android:padding="5dp"
+                    android:layout_marginTop="2dp"
+                    android:textSize="18sp" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_widthPercent="50%"
+                android:id="@+id/relamount"
+                android:layout_toRightOf="@id/relrate"
+                >
+                <ImageView
+                    android:fontFamily="@font/nunito_regular"
+                    android:layout_width="20sp"
+                    android:layout_height="20sp"
+                    android:src="@drawable/price"
+                    android:id="@+id/imgamount"
+                    />
+                <TextView
+                    android:fontFamily="@font/nunito_regular"
+                    android:layout_width="match_parent"
+                    android:layout_height="20sp"
+                    android:textSize="12sp"
+                    android:layout_toRightOf="@+id/imgamount"
+                    android:hint="Amount"
+                    android:id="@+id/txtAmountcap"
+                    android:paddingLeft="5dp"/>
+                <TextView
+                    android:id="@+id/txtamount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/txtAmountcap"
+                    android:fontFamily="@font/nunito_regular"
+                    android:imeOptions="actionNext"
+                    android:padding="5dp"
+                    android:layout_marginTop="2dp"
+                    android:textSize="18sp" />
+            </RelativeLayout>
+        </androidx.percentlayout.widget.PercentRelativeLayout>
+
+
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SettingsActivity">
+
+
+    <TextView
+        android:fontFamily="@font/nunito_regular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Settings"
+        android:textColor="#0D9228"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30dp"
+        android:id="@+id/tvsettings"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textAllCaps="false"
+        />
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:id="@+id/relsettings"
+
+    android:layout_centerInParent="true"
+    >
+
+    <EditText
+        android:id="@+id/txtipaddress"
+        android:fontFamily="@font/nunito_regular"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:hint="Enter IP Address"
+        android:textColor="#fff"
+        android:textColorHint="#fff"
+        android:gravity="center"
+        android:background="@drawable/rounded_background"
+        android:layout_marginTop="40dp"/>
+    <AutoCompleteTextView
+        android:id="@+id/txtbranch"
+        android:fontFamily="@font/nunito_regular"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:hint="Select Branch"
+        android:textColor="#fff"
+        android:textColorHint="#fff"
+        android:gravity="center"
+        android:background="@drawable/rounded_background"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/txtipaddress"
+        />
+    <AutoCompleteTextView
+        android:id="@+id/txtdepo"
+        android:fontFamily="@font/nunito_regular"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:hint="Select Depo"
+        android:textColor="#fff"
+        android:textColorHint="#fff"
+        android:gravity="center"
+        android:background="@drawable/rounded_background"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/txtbranch"
+        />
+    <AutoCompleteTextView
+        android:id="@+id/txtfinancialPeriod"
+        android:fontFamily="@font/nunito_regular"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:hint="Select Financial Period"
+        android:textColor="#fff"
+        android:textColorHint="#fff"
+        android:gravity="center"
+        android:background="@drawable/rounded_background"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/txtdepo"
+        />
+    <AutoCompleteTextView
+        android:id="@+id/txtsalestype"
+        android:fontFamily="@font/nunito_regular"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:hint="Select Sales Type"
+        android:textColor="#fff"
+        android:textColorHint="#fff"
+        android:gravity="center"
+        android:background="@drawable/rounded_background"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/txtfinancialPeriod"
+        />
+    <AutoCompleteTextView
+        android:id="@+id/txtdefaultparty"
+        android:fontFamily="@font/nunito_regular"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:hint="Select Default Party"
+        android:textColor="#fff"
+        android:textColorHint="#fff"
+        android:gravity="center"
+        android:background="@drawable/rounded_background"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/txtsalestype"
+        />
+    <Button
+        android:id="@+id/btnsavesettings"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/txtdefaultparty"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="30dp"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:fontFamily="@font/nunito_regular"
+        android:text="Save"
+        android:textAllCaps="false"
+        android:textColor="#fff"
+        android:textColorHint="#fff" />
+</RelativeLayout>
+
+</RelativeLayout>

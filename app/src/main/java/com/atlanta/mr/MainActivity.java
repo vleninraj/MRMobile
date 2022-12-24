@@ -39,10 +39,10 @@ public class MainActivity extends AppCompatActivity {
         Common.CurrentBranchID=ipAddress.getInt("BranchID",0);
         Common.CurrentDepoID =ipAddress.getInt("DepoID",0);
         Common.iFiscalID=ipAddress.getInt("FiscalID",0);
-        Common.iSalesTypeID=ipAddress.getInt("SalesTypeID",0);
+        Common.iPurchaseTypeID=ipAddress.getInt("PurchaseTypeID",0);
         Common.iPartyID=ipAddress.getInt("PartyID",0);
         Common.sPartyName=ipAddress.getString("PartyName", "");
-        Common.sSalesType=ipAddress.getString("SalesType", "");
+        Common.sPurchaseType=ipAddress.getString("PurchaseType", "");
         Common.sipAddress=sIpAddress;
         requestQueue = Volley.newRequestQueue(this);
         btnSettings.setOnClickListener(new View.OnClickListener() {
@@ -57,9 +57,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 Common.currentUser=null;
-                if(Common.iSalesTypeID==0)
+                if(Common.iPurchaseTypeID==0)
                 {
-                    Toast.makeText(getApplicationContext(),"Must set default sales type before login!",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Must set default purchase type before login!",Toast.LENGTH_LONG).show();
                     return;
                 }
                 if(txtpinnumber.getText().toString().equals(""))
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 Common.currentUser=new LoginUser();
-                String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/pos/LoginUser?PinNumber=" + txtpinnumber.getText().toString();
+                String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/LoginUser?PinNumber=" + txtpinnumber.getText().toString();
                 JsonObjectRequest jsonObjectRequest=new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

@@ -24,7 +24,8 @@ import com.atlanta.mr.Models.Branch;
 import com.atlanta.mr.Models.Depo;
 import com.atlanta.mr.Models.Fiscal;
 import com.atlanta.mr.Models.Party;
-import com.atlanta.mr.Models.SalesType;
+import com.atlanta.mr.Models.PurchaseType;
+
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -38,7 +39,7 @@ public class SettingsActivity extends AppCompatActivity {
     AutoCompleteTextView txtBranch;
     AutoCompleteTextView txtDepo;
     AutoCompleteTextView txtfinancialPeriod;
-    AutoCompleteTextView txtsalestype;
+    AutoCompleteTextView txtpurchasetype;
     AutoCompleteTextView txtdefaultparty;
     Button btnsavesettings;
     RequestQueue requestQueue;
@@ -46,7 +47,7 @@ public class SettingsActivity extends AppCompatActivity {
     final ArrayList<Branch> _branches=new ArrayList<>();
     final ArrayList<Depo> _depos=new ArrayList<>();
     final ArrayList<Fiscal> _fiscals=new ArrayList<>();
-    final ArrayList<SalesType> _salestypes=new ArrayList<>();
+    final ArrayList<PurchaseType> _purchasetypes=new ArrayList<>();
     ArrayList<Party> _parties=new ArrayList<>();
 
     @Override
@@ -57,7 +58,7 @@ public class SettingsActivity extends AppCompatActivity {
         txtBranch=findViewById(R.id.txtbranch);
         txtDepo=findViewById(R.id.txtdepo);
         txtfinancialPeriod=findViewById(R.id.txtfinancialPeriod);
-        txtsalestype=findViewById(R.id.txtsalestype);
+        txtpurchasetype=findViewById(R.id.txtpurchasetype);
         txtdefaultparty=findViewById(R.id.txtdefaultparty);
         btnsavesettings = findViewById(R.id.btnsavesettings);
         requestQueue = Volley.newRequestQueue(this);
@@ -67,12 +68,12 @@ public class SettingsActivity extends AppCompatActivity {
         int iBranchID=ipAddress.getInt("BranchID",0);
         int iDepoID=ipAddress.getInt("DepoID",0);
         int iFiscalID=ipAddress.getInt("FiscalID",0);
-        int iSalesTypeID=ipAddress.getInt("SalesTypeID",0);
+        int iPurchaseTypeID=ipAddress.getInt("PurchaseTypeID",0);
         int iPartyID=ipAddress.getInt("PartyID",0);
 
         LoadBranches();
         LoadFinancialPeriod();
-        LoadSalesTypes();
+        LoadPurchaseTypes();
         LoadParties();
         if(iBranchID!=0) {
             GetBranchByID(iBranchID);
@@ -84,9 +85,9 @@ public class SettingsActivity extends AppCompatActivity {
         {
             GetFiscalByID(iFiscalID);
         }
-        if(iSalesTypeID!=0)
+        if(iPurchaseTypeID!=0)
         {
-            GetSalesTypeByID(iSalesTypeID);
+            GetPurchaseTypeByID(iPurchaseTypeID);
         }
         if(iPartyID!=0)
         {
@@ -128,14 +129,14 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
-        txtsalestype.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        txtpurchasetype.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Object item = adapterView.getItemAtPosition(i);
-                if(item instanceof SalesType )
+                if(item instanceof PurchaseType)
                 {
-                    int id=((SalesType)item).getId();
-                    txtsalestype.setTag(id);
+                    int id=((PurchaseType)item).getId();
+                    txtpurchasetype.setTag(id);
                 }
             }
         });
@@ -163,7 +164,7 @@ public class SettingsActivity extends AppCompatActivity {
                 int iBranchID=0;
                 int iDepoID=0;
                 int iFiscalID=0;
-                int iSalesTypeID=0;
+                int iPurchaseTypeID=0;
                 int iPartyID=0;
                 if(txtBranch.getTag()!=null)
                 {
@@ -177,9 +178,9 @@ public class SettingsActivity extends AppCompatActivity {
                 {
                     iFiscalID=Integer.valueOf(txtfinancialPeriod.getTag().toString());
                 }
-                if(txtsalestype.getTag()!=null)
+                if(txtpurchasetype.getTag()!=null)
                 {
-                    iSalesTypeID=Integer.valueOf(txtsalestype.getTag().toString());
+                    iPurchaseTypeID=Integer.valueOf(txtpurchasetype.getTag().toString());
                 }
                 if(txtdefaultparty.getTag()!=null)
                 {
@@ -191,10 +192,10 @@ public class SettingsActivity extends AppCompatActivity {
                 ipAddressEditor.putInt("BranchID",iBranchID);
                 ipAddressEditor.putInt("DepoID",iDepoID);
                 ipAddressEditor.putInt("FiscalID",iFiscalID);
-                ipAddressEditor.putInt("SalesTypeID",iSalesTypeID);
+                ipAddressEditor.putInt("PurchaseTypeID",iPurchaseTypeID);
                 ipAddressEditor.putInt("PartyID",iPartyID);
                 ipAddressEditor.putString("PartyName",txtdefaultparty.getText().toString());
-                ipAddressEditor.putString("SalesType",txtsalestype.getText().toString());
+                ipAddressEditor.putString("PurchaseType",txtpurchasetype.getText().toString());
                 ipAddressEditor.apply();
                 Toast.makeText(SettingsActivity.this,"Settings Saved...",Toast.LENGTH_LONG).show();
                 finish();
@@ -286,32 +287,32 @@ public class SettingsActivity extends AppCompatActivity {
         });
         requestQueue.add(jsonArrayRequest);
     }
-    private  void LoadSalesTypes()
+    private  void LoadPurchaseTypes()
     {
         if(sIpAddress.equals(""))
         {
             return;
         }
-        _salestypes.clear();
-        String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/pos/getsalestype";
+        _purchasetypes.clear();
+        String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/getpurchasetype";
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 JSONArray jsonArray = response;
                 try {
-                    _salestypes.clear();
+                    _purchasetypes.clear();
                     for(int i=0;i<jsonArray.length();i++)
                     {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        SalesType _salestype=new SalesType();
-                        _salestype.setId(jsonObject.getInt("id"));
-                        _salestype.setName(jsonObject.getString("Name"));
-                        _salestypes.add(_salestype);
+                        PurchaseType _purchasetype=new PurchaseType();
+                        _purchasetype.setId(jsonObject.getInt("id"));
+                        _purchasetype.setName(jsonObject.getString("Name"));
+                        _purchasetypes.add(_purchasetype);
                     }
-                    SalesType[] itemsArray = _salestypes.toArray(new SalesType[_fiscals.size()]);
-                    ArrayAdapter<SalesType> adapter = new ArrayAdapter<SalesType>(SettingsActivity.this, android.R.layout.simple_list_item_1, itemsArray);
-                    txtsalestype.setAdapter(adapter);
-                    txtsalestype.setThreshold(0);
+                    PurchaseType[] itemsArray = _purchasetypes.toArray(new PurchaseType[_fiscals.size()]);
+                    ArrayAdapter<PurchaseType> adapter = new ArrayAdapter<PurchaseType>(SettingsActivity.this, android.R.layout.simple_list_item_1, itemsArray);
+                    txtpurchasetype.setAdapter(adapter);
+                    txtpurchasetype.setThreshold(0);
 
                 }
                 catch (Exception w)
@@ -489,13 +490,13 @@ public class SettingsActivity extends AppCompatActivity {
         });
         requestQueue.add(jsonArrayRequest);
     }
-    private  void GetSalesTypeByID(int id)
+    private  void GetPurchaseTypeByID(int id)
     {
         if(sIpAddress.equals(""))
         {
             return;
         }
-        String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/pos/getmastervalue?id=" + id;
+        String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/getmastervalue?id=" + id;
         StringRequest stringRequest=new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -503,8 +504,8 @@ public class SettingsActivity extends AppCompatActivity {
                 if(response!=null && !response.equals(""))
                 {
                     String sResult=response.replace("\"", "");
-                    txtsalestype.setText(sResult);
-                    txtsalestype.setTag(id);
+                    txtpurchasetype.setText(sResult);
+                    txtpurchasetype.setTag(id);
 
                 }
             }
@@ -522,7 +523,7 @@ public class SettingsActivity extends AppCompatActivity {
         {
             return;
         }
-        String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/pos/getAccountNameByID?id=" + id;
+        String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/getAccountNameByID?id=" + id;
         StringRequest stringRequest=new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

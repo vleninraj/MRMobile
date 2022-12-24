@@ -23,10 +23,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.atlanta.mr.Adapter.POSListAdapter;
+import com.atlanta.mr.Adapter.MRListAdapter;
 import com.atlanta.mr.Models.Depo;
 import com.atlanta.mr.Models.Fiscal;
-import com.atlanta.mr.Models.POSList;
+import com.atlanta.mr.Models.MRList;
 import com.atlanta.mr.Models.Party;
 
 import org.json.JSONArray;
@@ -43,8 +43,8 @@ public class PosListActivity extends AppCompatActivity {
     RequestQueue requestQueue;
     SearchView searchvw;
     Button btnsearch;
-    final ArrayList<POSList> _vouchers=new ArrayList<>();
-    final ArrayList<POSList> _vouchersfiltered=new ArrayList<>();
+    final ArrayList<MRList> _vouchers=new ArrayList<>();
+    final ArrayList<MRList> _vouchersfiltered=new ArrayList<>();
     Boolean blnisAdmin=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +60,10 @@ public class PosListActivity extends AppCompatActivity {
         Common.CurrentBranchID=ipAddress.getInt("BranchID",0);
         Common.CurrentDepoID =ipAddress.getInt("DepoID",0);
         Common.iFiscalID=ipAddress.getInt("FiscalID",0);
-        Common.iSalesTypeID=ipAddress.getInt("SalesTypeID",0);
+        Common.iPurchaseTypeID=ipAddress.getInt("PurchaseTypeID",0);
         Common.iPartyID=ipAddress.getInt("PartyID",0);
         Common.sPartyName=ipAddress.getString("PartyName", "");
-        Common.sSalesType=ipAddress.getString("SalesType", "");
+        Common.sPurchaseType=ipAddress.getString("PurchaseType", "");
         Common.sipAddress=sIpAddress;
         searchvw.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
@@ -90,7 +90,7 @@ public class PosListActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Only admin or supervisor can edit invoices!",Toast.LENGTH_LONG).show();
                 return;
             }
-                POSList  _pos= _vouchers.get(i);
+                MRList  _pos= _vouchers.get(i);
                 if(_pos!=null)
                 {
                     if(_pos.getVoucherNo().equals(""))
@@ -116,13 +116,13 @@ public class PosListActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String s) {
                 _vouchersfiltered.clear();
-                for (POSList _pos : _vouchers) {
+                for (MRList _pos : _vouchers) {
                     if (_pos.getVoucherNo().toUpperCase().startsWith(s.toString().toUpperCase())
                             || _pos.getVoucherNo().toUpperCase().endsWith(s.toString().toUpperCase())) {
                         _vouchersfiltered.add(_pos);
                     }
                 }
-                POSListAdapter adapter = new POSListAdapter(PosListActivity.this, _vouchersfiltered);
+                MRListAdapter adapter = new MRListAdapter(PosListActivity.this, _vouchersfiltered);
                 grdpos.setAdapter(adapter);
                 return true;
             }
@@ -163,7 +163,7 @@ public class PosListActivity extends AppCompatActivity {
     {
         if(Common.currentUser==null){ return; }
         String sPassowrd=Common.currentUser.getPassword();
-        String url = "http://" + sIpAddress + "/" + Common.DomainName + "/api/pos/isAdmin?password=" + sPassowrd;
+        String url = "http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/isAdmin?password=" + sPassowrd;
         StringRequest request=new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -288,7 +288,7 @@ public class PosListActivity extends AppCompatActivity {
             Toast.makeText(PosListActivity.this,"IP address can't be blank!",Toast.LENGTH_LONG).show();
             return;
         }
-        String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/pos/poslist?SalesTypeID=" + Common.iSalesTypeID;
+        String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/mrlist?PurchaseTypeID=" + Common.iPurchaseTypeID;
         JsonArrayRequest jsonArrayRequest =new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -298,7 +298,7 @@ public class PosListActivity extends AppCompatActivity {
                     for(int i=0;i<jsonArray.length();i++)
                     {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        POSList pos=new POSList();
+                        MRList pos=new MRList();
                         pos.setVoucherNo(jsonObject.getString("VoucherNo"));
                         pos.setId(jsonObject.getInt("id"));
                         pos.setVoucherDate(jsonObject.getString("VoucherDate"));
@@ -306,7 +306,7 @@ public class PosListActivity extends AppCompatActivity {
                         pos.setParty(jsonObject.getString("Party"));
                         _vouchers.add(pos);
                     }
-                    POSListAdapter adapter = new POSListAdapter(PosListActivity.this , _vouchers);
+                    MRListAdapter adapter = new MRListAdapter(PosListActivity.this , _vouchers);
                     grdpos.setAdapter(adapter);
                 }
                 catch (Exception ex)

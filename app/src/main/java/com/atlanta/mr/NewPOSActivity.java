@@ -31,12 +31,12 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.atlanta.mr.Adapter.POSDTLAdapter;
-import com.atlanta.mr.Adapter.POSListAdapter;
+import com.atlanta.mr.Adapter.MRDTLAdapter;
+import com.atlanta.mr.Adapter.MRListAdapter;
 import com.atlanta.mr.Models.Item;
 import com.atlanta.mr.Models.LoginUser;
-import com.atlanta.mr.Models.POSDTL;
-import com.atlanta.mr.Models.POSList;
+import com.atlanta.mr.Models.MRDTL;
+import com.atlanta.mr.Models.MRList;
 import com.atlanta.mr.Models.Unit;
 
 import org.json.JSONArray;
@@ -59,7 +59,7 @@ public class NewPOSActivity extends AppCompatActivity {
     RequestQueue requestQueue;
     Boolean blnNewRecord=false;
     Calendar cal = Calendar.getInstance();
-    TextView tvvoucherno,tvparty,tvsalesman,dtdate,txtbillamount;
+    TextView tvvoucherno,tvparty,tvloginuser,dtdate,txtbillamount;
     Button btnCalandar,btnsaveinvoice,btnadditem,btnreadbarcode,btnnewbill,btnfavourite;
     EditText txtbarcode;
     GridView grdnewpos;
@@ -68,7 +68,7 @@ public class NewPOSActivity extends AppCompatActivity {
     EditText txtrate;
     TextView txtamount;
     EditText txtqty;
-    POSDTLAdapter _posDtlAdapter;
+    MRDTLAdapter _posDtlAdapter;
     Boolean blnSavingStart=false;
     TextToSpeech textToSpeech;
     @Override
@@ -77,7 +77,7 @@ public class NewPOSActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_posactivity);
         tvvoucherno=findViewById(R.id.tvvoucherno);
         tvparty=findViewById(R.id.tvparty);
-        tvsalesman=findViewById(R.id.tvsalesman);
+        tvloginuser=findViewById(R.id.tvloginuser);
         dtdate=findViewById(R.id.dtdate);
         txtbillamount=findViewById(R.id.txtbillamount);
         btnCalandar=findViewById(R.id.btnCalandar);
@@ -113,10 +113,10 @@ public class NewPOSActivity extends AppCompatActivity {
         Common.CurrentBranchID=ipAddress.getInt("BranchID",0);
         Common.CurrentDepoID =ipAddress.getInt("DepoID",0);
         Common.iFiscalID=ipAddress.getInt("FiscalID",0);
-        Common.iSalesTypeID=ipAddress.getInt("SalesTypeID",0);
+        Common.iPurchaseTypeID=ipAddress.getInt("PurchaseTypeID",0);
         Common.iPartyID=ipAddress.getInt("PartyID",0);
         Common.sPartyName=ipAddress.getString("PartyName", "");
-        Common.sSalesType=ipAddress.getString("SalesType", "");
+        Common.sPurchaseType=ipAddress.getString("PurchaseType", "");
         Common.sipAddress=sIpAddress;
 
         if(blnNewRecord) {
@@ -214,7 +214,7 @@ public class NewPOSActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
 
-                                if(Common._posdtls.size()==0)
+                                if(Common._mrdtls.size()==0)
                                 {
                                     Toast.makeText(NewPOSActivity.this,"Atleast one row must be entered!",Toast.LENGTH_LONG).show();
                                     return;
@@ -308,7 +308,7 @@ public class NewPOSActivity extends AppCompatActivity {
                 {
                     obj=(Item)txtproduct.getTag();
                 }
-                POSDTL _dtl = new POSDTL();
+                MRDTL _dtl = new MRDTL();
                 _dtl.set_slno(getMaxSlno());
                 _dtl.set_productid(obj.getId());
                 _dtl.set_ProductCode(obj.getCode());
@@ -317,10 +317,10 @@ public class NewPOSActivity extends AppCompatActivity {
                 _dtl.set_Rate(dblRate);
                 _dtl.set_unitid(Integer.valueOf(txtunit.getTag().toString()));
                 _dtl.set_Unit(txtunit.getSelectedItem().toString());
-                Common._posdtls.add(_dtl);
+                Common._mrdtls.add(_dtl);
                 CalcTotals();
-                Collections.sort(Common._posdtls,new PosDtlComparator());
-                _posDtlAdapter =new POSDTLAdapter(NewPOSActivity.this,Common._posdtls);
+                Collections.sort(Common._mrdtls,new PosDtlComparator());
+                _posDtlAdapter =new MRDTLAdapter(NewPOSActivity.this,Common._mrdtls);
                 grdnewpos.setAdapter(_posDtlAdapter);
                 _posDtlAdapter.notifyDataSetChanged();
                 txtbarcode.requestFocus();
@@ -363,11 +363,11 @@ public class NewPOSActivity extends AppCompatActivity {
         String url="";
         if(blnFavourite)
         {
-            url= "http://" + sIpAddress + "/" + Common.DomainName + "/api/pos/GetFavourites";
+            url= "http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/GetFavourites";
         }
         else
         {
-            url= "http://" + sIpAddress + "/" + Common.DomainName + "/api/pos/GetItems";
+            url= "http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/GetItems";
         }
 
         JsonArrayRequest request=new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -412,7 +412,7 @@ public class NewPOSActivity extends AppCompatActivity {
                 if(_obj!=null)
                 {
                     txtproduct.setTag(_obj);
-                    String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/pos/GetUnits?productid=" + _obj.getId();
+                    String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/GetUnits?productid=" + _obj.getId();
                     JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
                         @Override
                         public void onResponse(JSONArray response) {
@@ -511,7 +511,7 @@ public class NewPOSActivity extends AppCompatActivity {
     }
    private void GetRate(int productID,int UnitID)
    {
-       String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/pos/getRate?productid=" + productID + "&unitid=" + UnitID;
+       String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/getRate?productid=" + productID + "&unitid=" + UnitID;
        JsonObjectRequest request=new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
            @Override
            public void onResponse(JSONObject response) {
@@ -562,12 +562,12 @@ public class NewPOSActivity extends AppCompatActivity {
        blnSavingStart=false;
        tvparty.setText(sPartyName);
        tvparty.setTag(iPartyID);
-       tvsalesman.setText(Common.currentUser.getName());
-       tvsalesman.setTag(Common.currentUser.getEmployeeID());
+       tvloginuser.setText(Common.currentUser.getName());
+       tvloginuser.setTag(Common.currentUser.getId());
        dtdate.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
        txtbillamount.setText("0.00");
-       Common._posdtls=new ArrayList<>();
-       _posDtlAdapter =new POSDTLAdapter(NewPOSActivity.this,Common._posdtls);
+       Common._mrdtls=new ArrayList<>();
+       _posDtlAdapter =new MRDTLAdapter(NewPOSActivity.this,Common._mrdtls);
        grdnewpos.setAdapter(_posDtlAdapter);
        _posDtlAdapter.notifyDataSetChanged();
        tvvoucherno.setTag("0");
@@ -584,7 +584,7 @@ public class NewPOSActivity extends AppCompatActivity {
            return;
        }
        ClearAll();
-       String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/pos/GetPos?hdrid=" + iHdrID;
+       String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/GetMR?hdrid=" + iHdrID;
        JsonArrayRequest jsonArrayRequest =new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
            @Override
            public void onResponse(JSONArray response) {
@@ -592,7 +592,7 @@ public class NewPOSActivity extends AppCompatActivity {
                JSONArray jsonArray = response;
                try {
 
-                   Common._posdtls.clear();
+                   Common._mrdtls.clear();
                    JSONObject objHdr=jsonArray.getJSONObject(0);
                    if(objHdr!=null)
                    {
@@ -603,21 +603,21 @@ public class NewPOSActivity extends AppCompatActivity {
                        tvvoucherno.setTag(objHdr.getInt("hdrid"));
                        tvparty.setText(objHdr.getString("PartyName"));
                        tvparty.setTag(objHdr.getInt("PartyID"));
-                       tvsalesman.setText(Common.currentUser.getName());
-                       tvsalesman.setTag(Common.currentUser.getEmployeeID());
+                       tvloginuser.setText(Common.currentUser.getName());
+                       tvloginuser.setTag(Common.currentUser.getId());
                        dtdate.setText(new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
                        tvparty.setText(objHdr.getString("PartyName"));
 
                        int iPartyID=objHdr.getInt("PartyID");
                        tvparty.setTag(iPartyID);
                    }
-                   Common._posdtls=new ArrayList<>();
+                   Common._mrdtls=new ArrayList<>();
                    for(int i=0;i<jsonArray.length();i++)
                    {
                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                       POSDTL pos=new POSDTL();
+                       MRDTL pos=new MRDTL();
                        pos.set_slno(jsonObject.getInt("SlNo"));
-                       pos.set_PosHdrid(jsonObject.getInt("hdrid"));
+                       pos.set_MRHdrid(jsonObject.getInt("hdrid"));
                        pos.set_Unit(jsonObject.getString("Unit"));
                        pos.set_unitid(jsonObject.getInt("UnitID"));
                        pos.set_Rate(jsonObject.getDouble("Rate"));
@@ -627,9 +627,9 @@ public class NewPOSActivity extends AppCompatActivity {
                        pos.set_ProductCode(jsonObject.getString("ProductCode"));
                        pos.set_Amount(pos.get_Qty()*pos.get_Rate());
 
-                       Common._posdtls.add(pos);
+                       Common._mrdtls.add(pos);
                    }
-                   _posDtlAdapter =new POSDTLAdapter(NewPOSActivity.this,Common._posdtls);
+                   _posDtlAdapter =new MRDTLAdapter(NewPOSActivity.this,Common._mrdtls);
                    grdnewpos.setAdapter(_posDtlAdapter);
                    _posDtlAdapter.notifyDataSetChanged();
                }
@@ -660,7 +660,7 @@ public class NewPOSActivity extends AppCompatActivity {
        btnsaveinvoice.setVisibility(View.INVISIBLE);
        JSONObject jsnSaveData=new JSONObject();
        JSONArray jsnArray=new JSONArray();
-       for(POSDTL _dtl :Common._posdtls)
+       for(MRDTL _dtl :Common._mrdtls)
        {
            JSONObject obj=new JSONObject();
            try {
@@ -669,9 +669,8 @@ public class NewPOSActivity extends AppCompatActivity {
                obj.put("BranchID",Common.CurrentBranchID);
                obj.put("DepoID",Common.CurrentDepoID);
                obj.put("LoginUserID",Common.currentUser.getId());
-               obj.put("SalesManID",Common.currentUser.getEmployeeID());
                obj.put("VoucherNo",tvvoucherno.getText().toString());
-               obj.put("SalesType",Common.iSalesTypeID);
+               obj.put("PurchaseType",Common.iPurchaseTypeID);
                obj.put("PartyID",Integer.valueOf(tvparty.getTag().toString()));
                obj.put("GrandTotal",Double.valueOf(txtbillamount.getText().toString()));
                obj.put("ProductID",_dtl.get_productid());
@@ -695,7 +694,7 @@ public class NewPOSActivity extends AppCompatActivity {
                e.printStackTrace();
            }
        }
-       String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/pos/savedata";
+       String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/savedata";
        JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(Request.Method.POST, url, jsnArray, new Response.Listener<JSONArray>() {
            @Override
            public void onResponse(JSONArray response) {
@@ -706,11 +705,11 @@ public class NewPOSActivity extends AppCompatActivity {
                        Integer iStatus=_jsnresponse.getInt("Status");
                        if(iStatus==1) {
                            if(blnNewRecord) {
-                               Toast.makeText(NewPOSActivity.this, "Invoice saved with Voucher No " + sVoucherNo, Toast.LENGTH_LONG).show();
+                               Toast.makeText(NewPOSActivity.this, "Material Receipt saved with Voucher No " + sVoucherNo, Toast.LENGTH_LONG).show();
                            }
                            else
                            {
-                               Toast.makeText(NewPOSActivity.this, "Invoice Updated with Voucher No " + sVoucherNo, Toast.LENGTH_LONG).show();
+                               Toast.makeText(NewPOSActivity.this, "Material Receipt Updated with Voucher No " + sVoucherNo, Toast.LENGTH_LONG).show();
                            }
                            ClearAll();
                            getVoucherNo();
@@ -719,7 +718,7 @@ public class NewPOSActivity extends AppCompatActivity {
                        else if(iStatus==2)
                        {
                            String sError=_jsnresponse.getString("ErrorString");
-                           String sMessage="POS while printing ! " +sError;
+                           String sMessage="Error while printing ! " +sError;
                            Toast.makeText(NewPOSActivity.this, sMessage, Toast.LENGTH_LONG).show();
                            blnSavingStart=false;
                            btnsaveinvoice.setVisibility(View.VISIBLE);
@@ -727,7 +726,7 @@ public class NewPOSActivity extends AppCompatActivity {
                        else
                        {
                            String sError=_jsnresponse.getString("ErrorString");
-                           String sMessage="POS Saving Failed! " +sError;
+                           String sMessage="Material Receipt Saving Failed! " +sError;
                            Toast.makeText(NewPOSActivity.this, sMessage, Toast.LENGTH_LONG).show();
                            blnSavingStart=false;
                            btnsaveinvoice.setVisibility(View.VISIBLE);
@@ -745,7 +744,7 @@ public class NewPOSActivity extends AppCompatActivity {
        }, new Response.ErrorListener() {
            @Override
            public void onErrorResponse(VolleyError error) {
-               Toast.makeText(NewPOSActivity.this, "POS Saving failed!", Toast.LENGTH_LONG).show();
+               Toast.makeText(NewPOSActivity.this, "MR Saving failed!", Toast.LENGTH_LONG).show();
                btnsaveinvoice.setVisibility(View.VISIBLE);
            }
        });
@@ -760,7 +759,7 @@ public class NewPOSActivity extends AppCompatActivity {
    {
        int islno=0;
        int itotslno=1;
-       for(POSDTL dtl:Common._posdtls)
+       for(MRDTL dtl:Common._mrdtls)
        {
            if(dtl.get_productid()!=0) {
                itotslno = itotslno + 1;
@@ -776,7 +775,7 @@ public class NewPOSActivity extends AppCompatActivity {
             txtbarcode.requestFocus();
             return;
         }
-        String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/pos/readBarcode?Barcode=" + sBarcode;
+        String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/readBarcode?Barcode=" + sBarcode;
         JsonObjectRequest jsonObjectRequest=new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -786,16 +785,17 @@ public class NewPOSActivity extends AppCompatActivity {
                     if(response!=null)
                     {
                         if(response.getInt("ProductID")!=0) {
-                            POSDTL _dtl = new POSDTL();
+                            MRDTL _dtl = new MRDTL();
                             _dtl.set_slno(getMaxSlno());
                             _dtl.set_productid(response.getInt("ProductID"));
                             _dtl.set_ProductCode(response.getString("ProductCode"));
                             _dtl.set_ProductName(response.getString("ProductName"));
                             _dtl.set_Qty(response.getDouble("Qty"));
-                            _dtl.set_Rate(response.getDouble("SalesRate"));
+                            _dtl.set_Rate(response.getDouble("PurchaseRate"));
                             _dtl.set_unitid(response.getInt("UnitID"));
                             _dtl.set_Unit(response.getString("UnitName"));
-                            Common._posdtls.add(_dtl);
+
+                            Common._mrdtls.add(_dtl);
                             CalcTotals();
                         }
                         else
@@ -804,8 +804,8 @@ public class NewPOSActivity extends AppCompatActivity {
                             txtbarcode.setError("Product Not Found!");
                         }
                         txtbarcode.setText("");
-                        Collections.sort(Common._posdtls,new PosDtlComparator());
-                        _posDtlAdapter =new POSDTLAdapter(NewPOSActivity.this,Common._posdtls);
+                        Collections.sort(Common._mrdtls,new PosDtlComparator());
+                        _posDtlAdapter =new MRDTLAdapter(NewPOSActivity.this,Common._mrdtls);
                         grdnewpos.setAdapter(_posDtlAdapter);
                         _posDtlAdapter.notifyDataSetChanged();
                         txtbarcode.requestFocus();
@@ -844,7 +844,7 @@ public class NewPOSActivity extends AppCompatActivity {
             Toast.makeText(NewPOSActivity.this,"IP address can't be blank!",Toast.LENGTH_LONG).show();
             return;
         }
-        String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/pos/getvoucherno?FiscalID=" + Common.iFiscalID + "&SalesTypeID=" + Common.iSalesTypeID;
+        String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/getvoucherno?FiscalID=" + Common.iFiscalID + "&PurchaseTypeID=" + Common.iPurchaseTypeID;
         StringRequest stringRequest=new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -873,7 +873,7 @@ public class NewPOSActivity extends AppCompatActivity {
     private void CalcTotals()
     {
         Double dblNetAmount=0.0;
-        for(POSDTL dtl: Common._posdtls)
+        for(MRDTL dtl: Common._mrdtls)
         {
             dtl.set_Amount(dtl.get_Qty()*dtl.get_Rate());
             dblNetAmount=dblNetAmount + (dtl.get_Qty()*dtl.get_Rate());
@@ -884,7 +884,7 @@ public class NewPOSActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-         _posDtlAdapter =new POSDTLAdapter(NewPOSActivity.this,Common._posdtls);
+         _posDtlAdapter =new MRDTLAdapter(NewPOSActivity.this,Common._mrdtls);
          grdnewpos.setAdapter(_posDtlAdapter);
          _posDtlAdapter.notifyDataSetChanged();
         CalcTotals();

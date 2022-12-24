@@ -1,7 +1,7 @@
 package com.atlanta.mr;
 
 import com.atlanta.mr.Models.LoginUser;
-import com.atlanta.mr.Models.POSDTL;
+import com.atlanta.mr.Models.MRDTL;
 
 import java.util.ArrayList;
 
@@ -11,10 +11,10 @@ public class Common {
     public  static int CurrentBranchID=0;
     public  static  int CurrentDepoID=0;
     public  static  int iFiscalID=0;
-    public  static  int iSalesTypeID=0;
+    public  static  int iPurchaseTypeID=0;
     public  static  int iPartyID=0;
     public static  String sPartyName;
-    public static String sSalesType;
+    public static String sPurchaseType;
 
 
     //Company Details
@@ -30,7 +30,7 @@ public class Common {
     public static String sDecimalsQty="";
     public static String sipAddress;
     public static LoginUser currentUser;
-    public static ArrayList<POSDTL> _posdtls;
+    public static ArrayList<MRDTL> _mrdtls;
 
 
 

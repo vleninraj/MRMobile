@@ -47,6 +47,8 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="2dp"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 android:background="@drawable/minusicon"
                 android:elevation="5dp" />
 
@@ -68,6 +70,8 @@
                 android:layout_height="30dp"
                 android:layout_marginLeft="2dp"
                 android:layout_toRightOf="@id/tvqty"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 android:background="@drawable/addicon"
                 android:elevation="5dp" />
 
@@ -113,6 +117,8 @@
                 android:id="@+id/btnremoveitem"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="2dp"

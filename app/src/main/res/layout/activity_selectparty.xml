@@ -24,7 +24,7 @@
             android:layout_height="20sp"
             android:textSize="15sp"
             android:layout_toRightOf="@+id/nameimg"
-            android:hint="Select Party "
+            android:hint="Select Supplier "
             android:id="@+id/txtpartycap"
             android:paddingLeft="5dp"/>
         <AutoCompleteTextView

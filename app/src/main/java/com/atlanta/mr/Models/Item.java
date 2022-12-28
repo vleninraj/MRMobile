@@ -5,6 +5,9 @@ public class Item {
     private  int id;
     private String Code;
     private String Name;
+    private String Unit;
+    private Double PurchaseRate;
+    private int UnitID;
 
     public int getId() {
         return id;
@@ -31,5 +34,31 @@ public class Item {
 
     public void setName(String name) {
         Name = name;
+    }
+
+    public String getUnit() {
+        return Unit;
+    }
+
+    public void setUnit(String unit) {
+        Unit = unit;
+    }
+
+
+
+    public int getUnitID() {
+        return UnitID;
+    }
+
+    public void setUnitID(int unitID) {
+        UnitID = unitID;
+    }
+
+    public Double getPurchaseRate() {
+        return PurchaseRate;
+    }
+
+    public void setPurchaseRate(Double purchaseRate) {
+        PurchaseRate = purchaseRate;
     }
 }

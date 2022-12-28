@@ -135,19 +135,19 @@ public class PosListActivity extends AppCompatActivity {
             public void onClick(View view) {
 
 
-                if( Common.iPartyID==0) {
+               // if( Common.iPartyID==0) {
 
                     ShowPartyDialog();
-                }
-                else
-                {
-                    Intent intentNewPOS = new Intent(PosListActivity.this, NewPOSActivity.class);
-                    intentNewPOS.putExtra("NewRecord", true);
-                    intentNewPOS.putExtra("PartyName",Common.sPartyName );
-                    intentNewPOS.putExtra("PartyID", Common.iPartyID);
-                    intentNewPOS.putExtra("HDRID", 0);
-                    startActivity(intentNewPOS);
-                }
+              //  }
+              //  else
+              //  {
+                //    Intent intentNewPOS = new Intent(PosListActivity.this, NewPOSActivity.class);
+                //    intentNewPOS.putExtra("NewRecord", true);
+                //    intentNewPOS.putExtra("PartyName",Common.sPartyName );
+               //     intentNewPOS.putExtra("PartyID", Common.iPartyID);
+                //    intentNewPOS.putExtra("HDRID", 0);
+                //    startActivity(intentNewPOS);
+               // }
             }
         });
 
@@ -206,7 +206,7 @@ public class PosListActivity extends AppCompatActivity {
         final Button btnCancel = dialog.findViewById(R.id.btncancel);
         txtselectparty.requestFocus();
         ArrayList<Party> _parties = new ArrayList<>();
-        String url = "http://" + sIpAddress + "/" + Common.DomainName + "/api/Party";
+        String url = "http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/GetSuppliers";
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {

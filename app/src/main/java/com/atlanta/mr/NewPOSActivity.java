@@ -18,6 +18,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +34,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.atlanta.mr.Adapter.MRDTLAdapter;
 import com.atlanta.mr.Adapter.MRListAdapter;
+import com.atlanta.mr.Adapter.ProductAdapter;
 import com.atlanta.mr.Models.Item;
 import com.atlanta.mr.Models.LoginUser;
 import com.atlanta.mr.Models.MRDTL;
@@ -57,7 +59,12 @@ public class NewPOSActivity extends AppCompatActivity {
 
     String sIpAddress="";
     RequestQueue requestQueue;
+    MRDTL _current;
     Boolean blnNewRecord=false;
+    ArrayList<Item> items;
+    ArrayList<Item> _items=new ArrayList<>();
+    ArrayList<Item> _itemsfiltered=new ArrayList<>();
+    ArrayList<Unit> units;
     Calendar cal = Calendar.getInstance();
     TextView tvvoucherno,tvparty,tvloginuser,dtdate,txtbillamount;
     Button btnCalandar,btnsaveinvoice,btnadditem,btnreadbarcode,btnnewbill,btnfavourite;
@@ -71,6 +78,9 @@ public class NewPOSActivity extends AppCompatActivity {
     MRDTLAdapter _posDtlAdapter;
     Boolean blnSavingStart=false;
     TextToSpeech textToSpeech;
+    AutoCompleteTextView txtproduct;
+    Spinner txtunit;
+    Button btnAdd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -186,13 +196,13 @@ public class NewPOSActivity extends AppCompatActivity {
         btnfavourite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddItem(true);
+                AddFavourite();
             }
         });
         btnadditem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddItem(false);
+                AddItem(true,0);
             }
         });
         btnreadbarcode.setOnClickListener(new View.OnClickListener() {
@@ -204,7 +214,16 @@ public class NewPOSActivity extends AppCompatActivity {
             }
         });
 
-
+        grdnewpos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                MRDTL  _pos= Common._mrdtls.get(i);
+                if(_pos!=null)
+                {
+                    AddItem(false,i);
+                }
+            }
+        });
         btnsaveinvoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -234,31 +253,212 @@ public class NewPOSActivity extends AppCompatActivity {
         });
 
     }
-    private void AddItem(Boolean blnFavourite)
+    private  void AddFavourite()
     {
-        final ArrayList<Item> items=new ArrayList<>();
-        final ArrayList<Unit> units=new ArrayList<>();
+
+        final LayoutInflater inflater=getLayoutInflater();
+        View DialogView=inflater.inflate(R.layout.activity_favourite,null);
+        GridView grdfavourite=DialogView.findViewById(R.id.grdfavourite);
+        SearchView searchvw=DialogView.findViewById(R.id.searchfavourite);
+        Button btnsearch=DialogView.findViewById(R.id.btnsearch);
+        final AlertDialog alert=new AlertDialog.Builder(NewPOSActivity.this).create();
+        searchvw.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                btnsearch.setVisibility(View.VISIBLE);
+                searchvw.setVisibility(View.GONE);
+                return true;
+            }
+        });
+        btnsearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnsearch.setVisibility(View.GONE);
+                searchvw.setVisibility(View.VISIBLE);
+                searchvw.setIconified(false);
+            }
+        });
+        searchvw.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String s) {
+                _itemsfiltered.clear();
+                for (Item _pos : _items) {
+                    if (_pos.getName().toUpperCase().startsWith(s.toString().toUpperCase())
+                            || _pos.getName().toUpperCase().endsWith(s.toString().toUpperCase())) {
+                        _itemsfiltered.add(_pos);
+                    }
+                }
+                ProductAdapter adapter = new ProductAdapter(NewPOSActivity.this, _itemsfiltered);
+                grdfavourite.setAdapter(adapter);
+                return true;
+            }
+        });
+
+        grdfavourite.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                Item  _pos= _items.get(i);
+                if(_pos!=null)
+                {
+                    if(_pos.getName().equals(""))
+                    {
+                        Toast.makeText(NewPOSActivity.this,"Invalid Item!",Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+
+                    if(_pos.getPurchaseRate()<=0)
+                    {
+                        LayoutInflater inflater2=getLayoutInflater();
+                        View DialogView2=inflater2.inflate(R.layout.activity_selectrate,null);
+                        AlertDialog alert2=new AlertDialog.Builder(NewPOSActivity.this).create();
+                        EditText txtsalesrate=DialogView2.findViewById(R.id.txtsalesrate);
+                        Button btnOK=DialogView2.findViewById(R.id.btnok);
+                        txtsalesrate.requestFocus();
+                        btnOK.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if(txtsalesrate.getText().toString().trim().equals(""))
+                                {
+                                    txtsalesrate.setError("Invalid Sales Rate");
+                                    txtsalesrate.requestFocus();
+                                    return;
+                                }
+                                if(Double.valueOf(txtsalesrate.getText().toString().trim())<=0)
+                                {
+                                    txtsalesrate.setError("Invalid Sales Rate");
+                                    txtsalesrate.requestFocus();
+                                    return;
+                                }
+                                MRDTL _dtl = new MRDTL();
+                                _dtl.set_slno(getMaxSlno());
+                                _dtl.set_productid(_pos.getId());
+                                _dtl.set_ProductCode(_pos.getCode());
+                                _dtl.set_ProductName(_pos.getName());
+                                _dtl.set_Qty(1.0);
+                                _dtl.set_Rate(Double.valueOf(txtsalesrate.getText().toString()));
+                                _dtl.set_unitid(_pos.getUnitID());
+                                _dtl.set_Unit(_pos.getUnit());
+                                Common._mrdtls.add(_dtl);
+                                CalcTotals();
+                                Collections.sort(Common._mrdtls,new PosDtlComparator());
+                                _posDtlAdapter =new MRDTLAdapter(NewPOSActivity.this,Common._mrdtls);
+                                grdnewpos.setAdapter(_posDtlAdapter);
+                                _posDtlAdapter.notifyDataSetChanged();
+                                txtbarcode.requestFocus();
+                                alert2.dismiss();
+                                alert.dismiss();
+                            }
+                        });
+                        alert2.setView(DialogView2);
+                        alert2.show();
+                    }
+                    else
+                    {
+                        MRDTL _dtl = new MRDTL();
+                        _dtl.set_slno(getMaxSlno());
+                        _dtl.set_productid(_pos.getId());
+                        _dtl.set_ProductCode(_pos.getCode());
+                        _dtl.set_ProductName(_pos.getName());
+                        _dtl.set_Qty(1.0);
+                        _dtl.set_Rate(_pos.getPurchaseRate());
+                        _dtl.set_unitid(_pos.getUnitID());
+                        _dtl.set_Unit(_pos.getUnit());
+                        Common._mrdtls.add(_dtl);
+                        CalcTotals();
+                        Collections.sort(Common._mrdtls,new PosDtlComparator());
+                        _posDtlAdapter =new MRDTLAdapter(NewPOSActivity.this,Common._mrdtls);
+                        grdnewpos.setAdapter(_posDtlAdapter);
+                        _posDtlAdapter.notifyDataSetChanged();
+                        txtbarcode.requestFocus();
+                        alert.dismiss();
+                    }
+
+
+
+
+
+
+                }
+            }
+        });
+        _items=new ArrayList<>();
+        String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/GetFavourites";
+        JsonArrayRequest request=new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+
+                JSONArray jsonArray = response;
+                try {
+                    _items.clear();
+                    for(int i=0;i<jsonArray.length();i++)
+                    {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        Item pos=new Item();
+                        pos.setCode(jsonObject.getString("Code"));
+                        pos.setId(jsonObject.getInt("id"));
+                        pos.setName(jsonObject.getString("Name"));
+                        pos.setUnit(jsonObject.getString("Unit"));
+                        pos.setPurchaseRate(jsonObject.getDouble("PurchaseRate"));
+                        pos.setUnitID(jsonObject.getInt("UnitID"));
+                        _items.add(pos);
+                    }
+                    ProductAdapter adapter = new ProductAdapter(NewPOSActivity.this , _items);
+                    grdfavourite.setAdapter(adapter);
+                }
+                catch (Exception ex)
+                {
+                    Toast.makeText(NewPOSActivity.this,ex.getMessage(),Toast.LENGTH_LONG).show();
+                }
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Toast.makeText(NewPOSActivity.this,error.getMessage(),Toast.LENGTH_LONG).show();
+            }
+        }) ;
+        requestQueue.add(request);
+
+
+
+        alert.setView(DialogView);
+        alert.show();
+
+    }
+    private void AddItem(boolean blnNewItem, int iIndex)
+    {
+        _current=null;
+        items=new ArrayList<>();
+        units=new ArrayList<>();
         final LayoutInflater inflater=getLayoutInflater();
         View DialogView=inflater.inflate(R.layout.activity_add_item,null);
-        final Button btnAdd=DialogView.findViewById(R.id.btnAdd);
-        final AutoCompleteTextView txtproduct=DialogView.findViewById(R.id.txtproduct);
+        btnAdd=DialogView.findViewById(R.id.btnAdd);
+        txtproduct=DialogView.findViewById(R.id.txtproduct);
         final Button DecrementButton=DialogView.findViewById(R.id.DecrementButton);
         final Button IncrementButton=DialogView.findViewById(R.id.IncrementButton);
         final TextView txtaddnewcap=DialogView.findViewById(R.id.txtaddnewcap);
         txtqty=DialogView.findViewById(R.id.txtqty);
-        final Spinner txtunit=DialogView.findViewById(R.id.txtunit);
+        txtunit=DialogView.findViewById(R.id.txtunit);
         txtrate=DialogView.findViewById(R.id.txtrate);
         txtamount =DialogView.findViewById(R.id.txtamount);
+        if(!blnNewItem)
+        {
+            _current=Common._mrdtls.get(iIndex);
+            txtqty.setText(String.format(Common.sDecimals,_current.get_Qty()));
+            txtrate.setText(String.format(Common.sDecimals,_current.get_Rate()));
+            CalcAmount();
+        }
         txtqty.setText("1");
         final AlertDialog alert=new AlertDialog.Builder(NewPOSActivity.this).create();
-        if(!blnFavourite)
-        {
-            txtaddnewcap.setText("Add New Item");
-        }
-        else
-        {
-            txtaddnewcap.setText("Add New Favourite Item");
-        }
+        txtaddnewcap.setText("Add New Item");
 
         txtproduct.requestFocus();
         btnAdd.setOnClickListener(new View.OnClickListener() {
@@ -308,8 +508,15 @@ public class NewPOSActivity extends AppCompatActivity {
                 {
                     obj=(Item)txtproduct.getTag();
                 }
-                MRDTL _dtl = new MRDTL();
-                _dtl.set_slno(getMaxSlno());
+                MRDTL _dtl;
+                if(blnNewItem) {
+                    _dtl = new MRDTL();
+                }
+                else
+                {
+                    _dtl = Common._mrdtls.get(iIndex);
+                }
+               _dtl.set_slno(getMaxSlno());
                 _dtl.set_productid(obj.getId());
                 _dtl.set_ProductCode(obj.getCode());
                 _dtl.set_ProductName(obj.getName());
@@ -317,7 +524,11 @@ public class NewPOSActivity extends AppCompatActivity {
                 _dtl.set_Rate(dblRate);
                 _dtl.set_unitid(Integer.valueOf(txtunit.getTag().toString()));
                 _dtl.set_Unit(txtunit.getSelectedItem().toString());
-                Common._mrdtls.add(_dtl);
+                if(blnNewItem)
+                {
+                    Common._mrdtls.add(_dtl);
+                }
+
                 CalcTotals();
                 Collections.sort(Common._mrdtls,new PosDtlComparator());
                 _posDtlAdapter =new MRDTLAdapter(NewPOSActivity.this,Common._mrdtls);
@@ -361,14 +572,7 @@ public class NewPOSActivity extends AppCompatActivity {
         });
 
         String url="";
-        if(blnFavourite)
-        {
-            url= "http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/GetFavourites";
-        }
-        else
-        {
-            url= "http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/GetItems";
-        }
+        url= "http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/GetItems";
 
         JsonArrayRequest request=new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
             @Override
@@ -389,6 +593,20 @@ public class NewPOSActivity extends AppCompatActivity {
                     ArrayAdapter<Item> adapter = new ArrayAdapter<Item>(NewPOSActivity.this, android.R.layout.simple_list_item_1, itemsArray);
                     txtproduct.setAdapter(adapter);
                     txtproduct.setThreshold(0);
+                    if(_current!=null)
+                    {
+                        for(int i=0;i<itemsArray.length;i++)
+                        {
+                            if(itemsArray[i].getId()==_current.get_productid())
+                            {
+                                txtproduct.setTag(itemsArray[i]);
+                                txtproduct.setText(itemsArray[i].getName());
+                                SelectUnit(itemsArray[i].getId(),blnNewItem);
+                                txtqty.requestFocus();
+                            }
+                        }
+                    }
+
 
                 }
                 catch (Exception ex)
@@ -412,59 +630,7 @@ public class NewPOSActivity extends AppCompatActivity {
                 if(_obj!=null)
                 {
                     txtproduct.setTag(_obj);
-                    String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/GetUnits?productid=" + _obj.getId();
-                    JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-                        @Override
-                        public void onResponse(JSONArray response) {
-
-                            try {
-                                JSONArray jsonArray = response;
-                                units.clear();
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                    Unit _unit = new Unit();
-                                    _unit.setId(jsonObject.getInt("id"));
-                                    _unit.setName(jsonObject.getString("Name"));
-                                    _unit.setCf(jsonObject.getDouble("CF"));
-                                    units.add(_unit);
-                                }
-
-                                txtunit.setAdapter(null);
-                                Unit[] unitsArray = units.toArray(new Unit[units.size()]);
-                                ArrayAdapter<Unit> adapter = new ArrayAdapter<Unit>(NewPOSActivity.this, android.R.layout.simple_list_item_1, unitsArray);
-                                txtunit.setAdapter(adapter);
-                                if(units.size()>0) {
-                                    txtunit.setSelection(0);
-                                    txtunit.setTag(units.get(0).getId());
-                                }
-                                int iproductid=0;
-                                int iUnitID=0;
-                                if(txtproduct.getTag() instanceof Item)
-                                {
-                                    Item obj=(Item)txtproduct.getTag();
-                                    iproductid = obj.getId();
-                                }
-                                if(txtunit.getTag()!=null && !txtunit.getTag().toString().equals(""))
-                                {
-                                    iUnitID= Integer.valueOf(txtunit.getTag().toString());
-                                }
-                                GetRate(iproductid,iUnitID);
-                                CalcAmount();
-
-                            }
-                            catch (Exception ex)
-                            {
-                                Toast.makeText(NewPOSActivity.this,ex.getMessage(),Toast.LENGTH_LONG).show();
-                            }
-
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(NewPOSActivity.this,error.getMessage(),Toast.LENGTH_LONG).show();
-                        }
-                    });
-                    requestQueue.add(jsonArrayRequest);
+                    SelectUnit(_obj.getId(),blnNewItem);
                 }
             }
         });
@@ -509,6 +675,66 @@ public class NewPOSActivity extends AppCompatActivity {
         alert.setView(DialogView);
         alert.show();
     }
+    private  void SelectUnit(int iproductid,boolean blnnewItem)
+    {
+        String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/GetUnits?productid=" + iproductid;
+        JsonArrayRequest jsonArrayRequest=new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+
+                try {
+                    JSONArray jsonArray = response;
+                    units.clear();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        Unit _unit = new Unit();
+                        _unit.setId(jsonObject.getInt("id"));
+                        _unit.setName(jsonObject.getString("Name"));
+                        _unit.setCf(jsonObject.getDouble("CF"));
+                        units.add(_unit);
+                    }
+
+                    txtunit.setAdapter(null);
+                    Unit[] unitsArray = units.toArray(new Unit[units.size()]);
+                    ArrayAdapter<Unit> adapter = new ArrayAdapter<Unit>(NewPOSActivity.this, android.R.layout.simple_list_item_1, unitsArray);
+                    txtunit.setAdapter(adapter);
+                    if(units.size()>0) {
+                        txtunit.setSelection(0);
+                        txtunit.setTag(units.get(0).getId());
+                    }
+                    if(!blnnewItem)
+                    {
+                        for(int j=0;j<unitsArray.length;j++)
+                        {
+                            txtunit.setSelection(j);
+                            txtunit.setTag(units.get(j).getId());
+                        }
+                    }
+
+                    int iUnitID=0;
+                    if(txtunit.getTag()!=null && !txtunit.getTag().toString().equals(""))
+                    {
+                        iUnitID= Integer.valueOf(txtunit.getTag().toString());
+                    }
+
+                    GetRate(iproductid,iUnitID);
+                    CalcAmount();
+
+                }
+                catch (Exception ex)
+                {
+                    Toast.makeText(NewPOSActivity.this,ex.getMessage(),Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(NewPOSActivity.this,error.getMessage(),Toast.LENGTH_LONG).show();
+            }
+        });
+        requestQueue.add(jsonArrayRequest);
+    }
    private void GetRate(int productID,int UnitID)
    {
        String url="http://" + sIpAddress + "/" + Common.DomainName + "/api/mr/getRate?productid=" + productID + "&unitid=" + UnitID;
@@ -520,7 +746,7 @@ public class NewPOSActivity extends AppCompatActivity {
 
                     if(response!=null)
                     {
-                        Double dblRate=response.getDouble("SalesRate");
+                        Double dblRate=response.getDouble("PurchaseRate");
                         txtrate.setText(String.format(Common.sDecimals,dblRate));
                         CalcAmount();
                     }
@@ -554,11 +780,7 @@ public class NewPOSActivity extends AppCompatActivity {
    private void ClearAll()
    {
        blnNewRecord=true;
-       if(Common.iPartyID!=0)
-       {
-           sPartyName=Common.sPartyName;
-           iPartyID=Common.iPartyID;
-       }
+
        blnSavingStart=false;
        tvparty.setText(sPartyName);
        tvparty.setTag(iPartyID);

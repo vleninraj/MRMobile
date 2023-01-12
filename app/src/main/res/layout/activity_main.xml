@@ -63,6 +63,21 @@
             android:textColor="#fff"
             android:textColorHint="#fff" />
 
+        <Button
+            android:id="@+id/btnregister"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@id/btnopensettings"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:fontFamily="@font/nunito_regular"
+            android:text="Register"
+            android:textAllCaps="false"
+            android:textColor="#fff"
+            android:textColorHint="#fff" />
+
 
 
 

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RegistrationActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:id="@+id/relregistration"
+        >
+
+        <TextView
+            android:fontFamily="@font/nunito_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Registration"
+            android:textColor="#0D9228"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/txtregcap"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:fontFamily="@font/nunito_regular"
+            android:layout_width="match_parent"
+            android:layout_height="20sp"
+            android:textSize="15sp"
+            android:layout_below="@id/txtregcap"
+            android:layout_marginTop="10dp"
+            android:hint="Product ID"
+            android:id="@+id/txtproductidcap"
+            android:paddingLeft="5dp"/>
+        <EditText
+            android:fontFamily="@font/nunito_regular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtproductid"
+            android:layout_marginTop="5dp"
+            android:layout_below="@id/txtproductidcap"
+            android:layout_marginBottom="20dp"
+            android:enabled="false"
+            />
+
+        <ImageView
+            android:fontFamily="@font/nunito_regular"
+            android:layout_width="20sp"
+            android:layout_height="20sp"
+            android:src="@drawable/customericon"
+            android:layout_below="@id/txtproductid"
+            android:id="@+id/nameimg"
+            />
+        <TextView
+            android:fontFamily="@font/nunito_regular"
+            android:layout_width="match_parent"
+            android:layout_height="20sp"
+            android:textSize="15sp"
+            android:layout_toRightOf="@+id/nameimg"
+            android:hint="Enter Registration Number "
+            android:layout_below="@id/txtproductid"
+            android:id="@+id/nameEdtxt"
+            android:paddingLeft="5dp"/>
+        <EditText
+            android:fontFamily="@font/nunito_regular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtregistrationno"
+            android:layout_marginTop="5dp"
+            android:layout_below="@id/nameEdtxt" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/relregistration"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp"
+        android:layout_centerHorizontal="true"
+        >
+        <Button
+            android:fontFamily="@font/nunito_regular"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="Register"
+            android:textAllCaps="false"
+            android:id="@+id/btnregister"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="#fff"/>
+        <Button
+            android:fontFamily="@font/nunito_regular"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Close"
+            android:layout_toRightOf="@id/btnregister"
+            android:id="@+id/btnclose"
+            android:textAllCaps="false"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="#fff"/>
+    </RelativeLayout>
+</RelativeLayout>
